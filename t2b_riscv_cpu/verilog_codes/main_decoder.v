@@ -5,7 +5,7 @@ module main_decoder (
     input  [6:0] op,
     input  [2:0] funct3,
     output [1:0] ResultSrc,
-    output       MemWrite, Branch, ALUR31, ALUR0, ALUSrc,
+    output       MemWrite, Branch, ALUR0, ALUSrc,
     output       RegWrite, Zero, Jump, Jalr,
     output reg   Take_Branch,
     output [1:0] ImmSrc,
@@ -39,7 +39,7 @@ always @(*) begin
         7'b0010011: controls = 17'b1_00_1_0_00_0_10_0_00_010_0; // I–type ALU
         7'b1100111: controls = 17'b1_00_1_0_10_0_00_0_00_010_1; // jalr
         7'b1101111: controls = 17'b1_11_0_0_10_0_00_1_00_010_0; // jal
-        7'b0010111: controls = 17'b1_xx_x_0_11_0_00_0_00_010_0; // auipc
+        7'b0010111: controls = 17'b1_xx_1_0_11_0_00_0_00_010_0; // auipc
         7'b0110111: controls = 17'b1_xx_x_0_11_0_00_0_00_010_0; // lui
         default:    controls = 17'bx_xx_x_x_xx_x_xx_x_xx_xxx_x; // ???
     endcase
@@ -48,9 +48,9 @@ always @(*) begin
     if (Branch) begin
         case (funct3)
             3'b000:  Take_Branch = Zero;
-            3'b001:  Take_Branch = ~Zero;
-            3'b100:  Take_Branch = ALUR31;
-            3'b101:  Take_Branch = !ALUR31;
+            3'b001:  Take_Branch = !Zero;
+            3'b100:  Take_Branch = Zero;
+            3'b101:  Take_Branch = !Zero;
 			3'b110:  Take_Branch = ALUR0;
 			3'b111:  Take_Branch = !ALUR0;
             default: Take_Branch = 0;

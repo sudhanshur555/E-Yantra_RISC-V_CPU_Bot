@@ -9,7 +9,7 @@ module datapath (
     input   [1:0] ImmSrc, Store,
     input   [2:0] Load,
     input   [3:0] ALUControl,
-    output        Zero, ALUR31, ALUR0,
+    output        Zero, ALUR0,
     output [31:0] PC,
     input  [31:0] Instr,
     output [31:0] Mem_WrAddr, Mem_WrData,
@@ -57,7 +57,7 @@ store_extend strextd (WriteData, Store, Mem_WrData);
 
 // assign Mem_WrData = WriteData;
 assign Mem_WrAddr = ALUResult;
-assign ALUR31 = ALUResult[31];
+// assign ALUR31 = ALUResult[31];
 assign ALUR0 = ALUResult[0];
 
 endmodule

@@ -18,14 +18,20 @@ always @(*) begin
                  ALUControl = 4'b0000;    // addition
 					  end
         2'b01: begin 
-            if (funct3==3'b110) ALUControl = 4'b0101;
-            else  ALUControl = 4'b0001; 
-            end            // subtraction
+            case (funct3) 
+            3'b110: ALUControl = 4'b0101; 
+            3'b101: ALUControl = 4'b1101;
+            3'b100: ALUControl = 4'b1101;
+             //  B-Type
+             3'b000: ALUControl = 4'b0001; 
+             3'b001: ALUControl = 4'b0001;
+            endcase
+        end          // subtraction
 			default:
             case (funct3) // R-type or I-type ALU
                 3'b000: begin
                     // True for R-type subtract
-                    if   (funct7b5 & opb5) ALUControl = 4'b0001; //sub
+                    if   (funct7b5 & opb5) ALUControl = 4'b0001; //sub  
                     else ALUControl = 4'b0000; // add, addi
                 end
                 3'b001:  ALUControl = 4'b0100; //sll, slli

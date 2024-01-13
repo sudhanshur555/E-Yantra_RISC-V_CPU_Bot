@@ -14,10 +14,12 @@ always @(a, b, alu_ctrl) begin
         4'b0001: alu_out <= a + ~b + 1;  // sub
         4'b0010: alu_out <= a & b;       // and
         4'b0011: alu_out <= a | b;       // or
+      4'b1101: alu_out <= ($unsigned(a) >= $unsigned(b) ? 1 : 0);
+      // or
         4'b0100: alu_out <= a << b[4:0]; // sll
         4'b0101: begin                   // slt
-                    if (a[31] != b[31]) alu_out <= a[31] ? 0 : 1;
-                    else alu_out <= a < b ? 1 : 0;
+                    if (a[31] != b[31]) alu_out <= (a[31] ? 0 : 1);
+                    else alu_out <= (a < b ? 1 : 0);
                 end
         4'b0110: alu_out <= a ^ b;         // xor
         4'b0111: alu_out <= a >> b[4:0];   // srl
