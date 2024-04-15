@@ -1,0 +1,33 @@
+
+// include'"uart_rx.v"
+// include'"uart_tx.v"
+// include'"Line_Follower.v"
+// include'"moter_out.v"
+
+module  top_module(  clk_50M,rx,tx,us,ir,pwm1,pwm2
+  );
+wire clk_3125KHz;
+input clk_50M;
+input rx;
+output tx,pwm1,pwm2;
+wire no1,no2;
+wire [7:0] rx_msg,data;
+wire rx_complete;
+wire sensdata;
+wire clk_3125KHz;
+wire [11:0] l,c,r;
+wire adc_cs_n, din;
+
+ADC_controller adc(sensdata,clk_3125KHz,clk_50M,adc_cs_n,din,l,c,r);
+Line_Follower lf(clk_50M,rx_msg,data,sensdata,no1,no2,us,l,c,r,din,adc_cs_n);
+Frequency_Scaling fs(clk_50M,clk_3125KHz);
+moter_out mo(clk_3125KHz,no1,no2,pwm1,pwm2);
+uart_rx uart_LF_rx(clk_50M,rx,rx_msg,rx_complete);
+uart_tx uart_LF_tx( clk_50M, data, tx);
+
+
+
+
+
+
+endmodule

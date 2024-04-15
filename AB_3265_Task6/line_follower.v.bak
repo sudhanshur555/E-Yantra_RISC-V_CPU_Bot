@@ -1,0 +1,20 @@
+module Line_Follower(clk_50M,rx_msg,data,sensdata,no1,no2,us,l,c,r,din,adc_cs_n);
+
+
+input us;
+    input clk_50M;
+    input reg [7:0] rx_msg;
+output reg [7:0] data;
+input sensdata;
+output no1,no2;
+input [11:0] l,c,r;
+input adc_cs_n,din;
+
+
+
+
+
+
+
+
+endmodule

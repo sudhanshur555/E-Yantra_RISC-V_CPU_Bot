@@ -1,0 +1,14 @@
+module Identify_fault(clk_50Mpulses , em1, em2 );
+input pulses;
+output em1, em2;
+
+
+always @(posedge clk_50M) begin
+if(pulses < certain_value) begin
+    em1 <= 1'b1;
+    em2 <= 1'b0;
+end
+else begin
+    em1 <= 1'b0;
+    em2 <= 1'b0;
+end

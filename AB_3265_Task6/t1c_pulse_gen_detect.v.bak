@@ -1,0 +1,148 @@
+// AstroTinker Bot : Task 1C : Pulse Generator and Detector
+/*
+Instructions
+-------------------
+Students are not allowed to make any changes in the Module declaration.
+
+This file is used to design a module which will generate a 10us pulse and detect incoming pulse signal.
+
+Recommended Quartus Version : 20.1
+The submitted project file must be 20.1 compatible as the evaluation will be done on Quartus Prime Lite 20.1.
+
+Warning: The error due to compatibility will not be entertained.
+-------------------
+*/
+
+// t1c_pulse_gen_detect
+//Inputs : clk_50M, reset, echo_rx
+//Output : trig, distance, pulses, state
+
+// module declaration
+module t1c_pulse_gen_detect (
+    input clk_50M, reset, echo_rx,
+    output trigger,
+    output reg out,
+    output [21:0] pulses,
+    output reg [1:0] state
+);
+
+reg trig;
+
+initial begin
+    trig = 0; out = 0; pulses = 0; state = 0;
+end
+
+
+//////////////////DO NOT MAKE ANY CHANGES ABOVE THIS LINE//////////////////
+  // Define state constants
+  parameter WARM_UP = 0;
+  parameter trig = 1;
+  parameter READ_PULSE = 2;
+  parameter CREATE_OUT = 3;
+
+  // Define state registers
+  reg [1:0] next_state;
+
+  // Define a counter for the 1ms loop
+  reg [19:0] loop_counter;
+
+  // Define a counter for pulse width
+  reg [21:0] pulse_counter;
+
+  // Define a counter for the 1us delay
+  reg [9:0] delay_counter;
+
+  //trig counter
+  reg [9:0] trig_counter;
+
+  always @(posedge clk_50M ) begin
+    if(reset) begin
+      state<=WARM_UP;
+      loop_counter <= 0;
+      pulse_counter <= 0;
+      delay_counter <= 0;
+      trig <= 1'b0;
+      out <= 1'b0;
+      pulses <= 0;
+      trig_counter <= 0;
+    end
+    else begin 
+      // State transition logic
+      case (state)
+      WARM_UP: begin
+      if(reset) begin
+        state<=WARM_UP;
+        end
+        else begin
+            if(delay_counter<49) begin
+              delay_counter<=delay_counter+1;
+            end
+             else begin
+              delay_counter<=0;
+          state<=trig; 
+      end
+          end
+          end
+        
+      trig: begin     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//
+        if ( trig_counter < 500 ) begin
+        trig <= 1'b1;
+        trig_counter <= trig_counter+1;
+      end 
+      else begin
+        trig_counter<=0;
+        trig <= 1'b0;
+         state <= READ_PULSE;
+          end
+        end 
+      
+
+  READ_PULSE: begin
+    if (loop_counter < 49998) begin
+        loop_counter <= loop_counter + 1;
+        if (echo_rx) begin
+            pulse_counter <= pulse_counter + 1;
+             pulses <= pulse_counter+1;
+        end
+        else begin
+            pulses <= pulse_counter+1;// Reset the pulse_counter when there's no echo
+        end
+    end
+    else begin
+       pulses <= pulse_counter+1;
+        loop_counter <= 0;
+        state <= CREATE_OUT;
+    end
+end
+         
+
+      CREATE_OUT:begin
+        if(pulses==29410) begin
+          out<=1'b1;
+        state<=WARM_UP;
+        end
+        else begin
+          if(reset) begin
+        out<=1'b0;
+        state<=WARM_UP;
+        end
+        else begin
+          out<=out;
+          state<=WARM_UP;
+        end
+      end
+      end
+      
+      
+      endcase
+    end
+    end
+  
+  assign trigger = trig;
+/*
+Add your logic here
+*/
+
+//////////////////DO NOT MAKE ANY CHANGES BELOW THIS LINE//////////////////
+
+endmodule

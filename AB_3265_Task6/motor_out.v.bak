@@ -1,0 +1,16 @@
+module motor_op(input clk_3125KHz,input no1,input no2,output pwm1,output pwm2);
+
+
+wire [3:0] no_1,no_2;
+reg pwm_1,pwm_2;
+
+pwm_generator pwmleft(   
+     clk_3125KHz,
+     no_1,
+ clk_195KHz, pwm_1);
+
+pwm_generator pwmright(   
+    clk_3125KHz,
+    no_2,
+ clk_195KHz, pwm_2);
+endmodule

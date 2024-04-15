@@ -1,0 +1,63 @@
+module write_points(SP, EP, clk_50M, reset, Ext_MemWrite, Ext_WriteData, Ext_DataAdr, MemWrite, WriteData, DataAdr, ReadData);
+    input clk_50M;
+    input SP;
+    input EP;
+    output reset;
+    output Ext_WriteData;
+    output Ext_DataAdr;
+    output MemWrite;
+    output WriteData;
+    output DataAdr;
+    output ReadData;
+
+    reg [31:0] counter;
+
+    initial begin 
+        counter <= 0 ;
+    end
+    always @(posedge clk_50M) begin
+
+    if(counter < 5000) begin
+        counter <=  counter +1;
+    end
+    else begin
+        counter <= 0;
+    end
+
+    SP <= 0;
+    EP <= 7;
+
+    reset <= 1;
+
+    // write START_POINT in the memory address 02000000
+    Ext_MemWrite <= 1; Ext_WriteData <= SP; Ext_DataAdr <= 32'h02000000; 
+    Ext_MemWrite <= 0; Ext_WriteData <= 00; Ext_DataAdr <= 32'h0; 
+
+       if(counter < 10000) begin
+        counter <=  counter +1;
+    end
+    else begin
+        counter <= 0;
+    end
+
+    // write END_POINT in the memory address 02000004
+    Ext_MemWrite <= 1; Ext_WriteData <= EP; Ext_DataAdr <= 32'h02000004; 
+    Ext_MemWrite <= 0; Ext_WriteData <= 00; Ext_DataAdr <= 32'h0; 
+
+   if(counter < 15000) begin
+        counter <=  counter +1;
+    end
+    else begin
+        counter <= 0;
+    end
+    // write NODE_POINT as 00 in the memory address 02000008
+ 
+    reset <= 0;
+    // External Memory Access Disabled
+    Ext_MemWrite <= 0; Ext_WriteData <= 0; Ext_DataAdr <= 0;
+   
+    end
+endmodule
+
+
+

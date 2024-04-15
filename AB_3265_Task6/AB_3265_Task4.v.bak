@@ -1,0 +1,41 @@
+//
+//'include "uart_tx.v"
+//'include "uart_rx.v"
+//'include "Line_Follower.v"
+//'include "motor_out.v"
+//'include "ADC_controller.v"
+//'include "gpio.v"
+//'include "Frequency_Scaling.v"
+
+
+module  AB_3265_Task4(  clk_50M,rx,tx,us,pwml1,pwml2,pwmr1,pwmr2);
+wire clk_3125KHz;
+input clk_50M;
+input rx;
+input us;
+output tx,
+output pwml1,
+output pwml2,
+output pwmr1,
+ output pwmr2,
+
+wire [3:0] no1,no2;
+wire [7:0] rx_msg,data;
+wire rx_complete;
+wire sensdata;
+wire [11:0] l,c,r;
+wire adc_cs_n, din;
+
+ADC_Controller adc(sensdata,clk_3125KHz,clk_50M,adc_cs_n,din,l,c,r);
+Line_Follower lf(clk_50M,rx_msg,data,sensdata,no1,no2,us,l,c,r,din,adc_cs_n);
+Frequency_Scaling fs(clk_50M,clk_3125KHz);
+motor_out mo(clk_3125KHz,no1,no2,pwm1,pwm2);
+uart_rx uart_LF_rx(clk_50M,rx,rx_msg,rx_complete);
+uart_tx uart_LF_tx( clk_50M, data, tx);
+
+
+
+
+
+
+endmodule
